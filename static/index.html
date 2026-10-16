@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VidyaSaathi AI</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">V</span> VidyaSaathi <small>AI</small></div>
+  <div class="top-right">
+    <span id="mode" class="pill">...</span>
+    <a href="/teacher" class="link">Teacher</a>
+  </div>
+</header>
+
+<main>
+  <!-- 1. Welcome -->
+  <section id="s-welcome" class="card">
+    <h1 data-t="welcome">Namaste! Let's learn maths together.</h1>
+    <p class="muted" data-t="welcomeSub">First, 5 quick questions so I know where to start.</p>
+    <label data-t="name">Your name</label>
+    <input id="name" maxlength="40" autocomplete="off" placeholder="e.g. Priya">
+    <label data-t="class">Class</label>
+    <select id="grade">
+      <option>3</option><option>4</option><option selected>5</option><option>6</option>
+      <option>7</option><option>8</option>
+    </select>
+    <label data-t="lang">Language</label>
+    <div class="seg">
+      <button type="button" class="seg-btn on" data-lang="en">English</button>
+      <button type="button" class="seg-btn" data-lang="hi">हिन्दी</button>
+    </div>
+    <button id="start" class="primary" data-t="start">Start</button>
+  </section>
+
+  <!-- 2. Diagnostic + practice share one question card -->
+  <section id="s-question" class="card hidden">
+    <div class="row">
+      <span id="stage" class="pill accent"></span>
+      <span id="levelBadge" class="pill"></span>
+    </div>
+    <div class="progress"><div id="bar"></div></div>
+    <h2 id="qtext"></h2>
+    <button id="speak" class="ghost" title="Read aloud">🔊 <span data-t="listen">Listen</span></button>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback hidden"></div>
+    <button id="next" class="primary hidden" data-t="next">Next</button>
+  </section>
+
+  <!-- 3. Placement result -->
+  <section id="s-placed" class="card hidden center">
+    <div class="big">🎯</div>
+    <h2 id="placedText"></h2>
+    <p class="muted" id="placedSub"></p>
+    <button id="toPractice" class="primary" data-t="practice">Start practising</button>
+  </section>
+
+  <!-- Tutor chat -->
+  <section id="s-chat" class="card hidden">
+    <h3>💬 <span data-t="ask">Ask VidyaSaathi</span></h3>
+    <div id="chat" class="chat"></div>
+    <form id="chatForm" class="chat-form">
+      <input id="chatInput" autocomplete="off" placeholder="Type 'hint' or ask a question">
+      <button type="button" id="mic" class="ghost" title="Speak">🎤</button>
+      <button class="primary small" data-t="send">Send</button>
+    </form>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

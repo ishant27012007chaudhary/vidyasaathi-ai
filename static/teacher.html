@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VidyaSaathi · Teacher</title>
+<link rel="stylesheet" href="/static/style.css">
+<style>
+  main { max-width: 960px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+  .stat b { display: block; font-size: 28px; }
+  .stat span { color: var(--muted); font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { padding: 10px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+  th { color: var(--muted); font-weight: 600; font-size: 13px; }
+  .tablewrap { overflow-x: auto; }
+  .groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .group { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; padding: 12px; }
+  .flag { color: var(--bad); font-weight: 700; }
+  .up { color: var(--ok); font-weight: 700; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">V</span> VidyaSaathi <small>Teacher</small></div>
+  <div class="top-right"><a href="/" class="link">Student app</a></div>
+</header>
+<main>
+  <div class="stats" id="stats"></div>
+  <section class="card">
+    <h3>Suggested groups for multigrade teaching</h3>
+    <p class="muted">Children practising the same level can be taught together, whatever their class.</p>
+    <div class="groups" id="groups"></div>
+  </section>
+  <section class="card">
+    <div class="row"><h3>Students</h3><button id="seed" class="ghost">Load sample class</button></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Name</th><th>Class</th><th>Lang</th><th>Start</th><th>Now</th><th>Gain</th><th>Attempts</th><th>Accuracy</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <p class="muted"><span class="flag">!</span> = Class 5+ still at Level 1-2 (needs extra attention)</p>
+  </section>
+</main>
+<script>
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+async function load() {
+  const d = await (await fetch("/api/teacher")).json();
+  const s = d.summary;
+  document.getElementById("stats").innerHTML = [
+    [s.students, "Active learners"], [s.attempts, "Questions answered"],
+    [s.avg_accuracy + "%", "Average accuracy"], [s.moved_up, "Moved up a level"],
+  ].map(([v, l]) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
+  document.getElementById("groups").innerHTML = d.groups.map((g) =>
+    `<div class="group"><b>Level ${g.level}: ${esc(g.level_name)}</b><br><span class="muted">${g.students.map(esc).join(", ")}</span></div>`
+  ).join("") || '<p class="muted">No students yet.</p>';
+  document.getElementById("rows").innerHTML = d.students.map((st) => `<tr>
+    <td>${esc(st.name)} ${st.below_grade ? '<span class="flag">!</span>' : ""}</td><td>${st.grade}</td><td>${st.lang}</td>
+    <td>L${st.start_level}</td><td>L${st.level}</td><td class="${st.gain > 0 ? "up" : ""}">${st.gain > 0 ? "+" + st.gain : st.gain}</td>
+    <td>${st.attempts}</td><td>${st.accuracy}%</td></tr>`).join("");
+}
+document.getElementById("seed").addEventListener("click", async () => { await fetch("/api/seed-demo", { method: "POST" }); load(); });
+load();
+</script>
+</body>
+</html>
